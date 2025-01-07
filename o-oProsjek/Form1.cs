@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -70,7 +70,7 @@ namespace o_oProsjek
             lstBoxIspis.Items.Clear();
             foreach (Ocjena o in ocjene)
             {
-                lstBoxIspis.Items.Add($"{o.Predmet} - {o.OcjenaValue} ({o.Datum.ToShortDateString()})");
+                lstBoxIspis.Items.Add($"{o.Datum.ToShortDateString()}\t{o.Predmet}\t{o.OcjenaValue}");
             }
         }
 
@@ -95,10 +95,20 @@ namespace o_oProsjek
 
             string odabraniPredmet = comboBox2.SelectedItem.ToString();
 
-            // Izračunaj prosjek za odabrani predmet koristeći LINQ Query metodu
-            double prosjekPredmeta = (from o in ocjene
-                                      where o.Predmet == odabraniPredmet
-                                      select o.OcjenaValue).Average();
+            // Dohvati ocjene za odabrani predmet
+            var ocjenePredmeta = from o in ocjene
+                                 where o.Predmet == odabraniPredmet
+                                 select o.OcjenaValue;
+
+            // Provjeri ima li ocjena za odabrani predmet
+            if (!ocjenePredmeta.Any())
+            {
+                MessageBox.Show($"Nema unesenih ocjena za {odabraniPredmet}.");
+                return;
+            }
+
+            // Izračunaj prosjek 
+            double prosjekPredmeta = ocjenePredmeta.Average();
 
             // Prikaži prosjek
             MessageBox.Show($"Prosjek ocjena za {odabraniPredmet}: {prosjekPredmeta:F2}");
@@ -158,7 +168,7 @@ namespace o_oProsjek
 
             foreach (Ocjena o in ocjeneZaPrikaz)
             {
-                lstBoxIspis.Items.Add($"{o.Predmet} - {o.OcjenaValue} ({o.Datum.ToShortDateString()})");
+                lstBoxIspis.Items.Add($"{o.Datum.ToShortDateString()}\t{o.Predmet}\t{o.OcjenaValue}");
             }
         }
     }
